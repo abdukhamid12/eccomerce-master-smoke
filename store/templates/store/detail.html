@@ -1,0 +1,127 @@
+<!-- BASE -->
+{% extends 'base.html' %}
+<!-- /BASE -->
+
+<!-- STATIC -->
+{% load static %}
+<!-- /STATIC -->
+
+<!-- CSS -->
+{% block style %}
+    <link rel="stylesheet" href="{% static '/store/css/detail.css' %}">
+{% endblock %}
+<!-- /CSS -->
+
+<!-- Title -->
+{% block title %}
+    Detail
+{% endblock %}
+<!-- /Title -->
+
+<!-- BreadCrumbs -->
+{% block breadcrumbs %}
+    <li class="breadcrumb-item">
+        <a class="link-body-emphasis fw-semibold text-decoration-none text-primary" href="{% url 'store:store' %}">
+            <i class="bi bi-house-door-fill"></i>
+            Store
+        </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Detail
+    </li>
+{% endblock %}
+<!-- /BreadCrumbs -->
+
+<!-- Content -->
+{% block content %}
+    {% if product %}
+        <!-- Detail -->
+        <div class="row mb-4">
+
+            <!-- Detail Images -->
+            <div class="col-6">
+                <div class="row">
+                    <!-- Vertical Images -->
+                    <div class="col-2 img-large">
+                        <img class="object-fit-cover" style="width: 80px; height: 90px;"
+                             src="{{ product.image_url }}" alt="rasm">
+                        <img class="object-fit-cover" style="width: 80px; height: 90px; margin-top: 10px;"
+                             src="{{ product.image_url }}" alt="rasm">
+                        <img class="object-fit-cover" style="width: 80px; height: 90px; margin-top: 10px;"
+                             src="{{ product.image_url }}" alt="rasm">
+                        <img class="object-fit-cover" style="width: 80px; height: 90px; margin-top: 10px;"
+                             src="{{ product.image_url }}" alt="rasm">
+                        <img class="object-fit-cover" style="width: 80px; height: 90px; margin-top: 10px;"
+                             src="{{ product.image_url }}" alt="rasm">
+                        <img class="object-fit-cover" style="width: 80px; height: 90px; margin-top: 10px;"
+                             src="{{ product.image_url }}" alt="rasm">
+                        <img class="object-fit-cover" style="width: 80px; height: 90px; margin-top: 10px;"
+                             src="{{ product.image_url }}" alt="rasm">
+                        <img class="object-fit-cover" style="width: 80px; height: 90px; margin-top: 10px;"
+                             src="{{ product.image_url }}" alt="rasm">
+                    </div>
+                    <!-- /Vertical Images -->
+
+                    <!-- Large One image -->
+                    <div class="col-10 p-0">
+                        <img class="img-large img-fluid object-fit-cover" src="{{ product.image_url }}"
+                             alt="rasm">
+                    </div>
+                    <!-- /Large One image -->
+                </div>
+            </div>
+            <!-- /Detail Images -->
+
+            <!-- Detail Article -->
+            <div class="col-6">
+                <h3>{{ product.name }}</h3>
+                <hr>
+                {{ product.description }}
+                <!-- Buttons -->
+                <div class="box-element p-2">
+                    <br>
+                    <br>
+                    <div class="display-flex flex-wrap">
+                        <!-- Back to Shopping -->
+                        <button class="btn btn-primary">
+                            <a class="icon-link icon-link-hover fs-6 text-decoration-none link-hover-white"
+                               style="--bs-icon-link-transform: translate(-0.325rem, 0); --bs-link-hover-color-rgb: white; --bs-link-color-rgb: yellow;"
+                               href="{% url 'store:store' %}">
+                                <svg class="bi" aria-hidden="true">
+                                    <i class="bi bi-arrow-left"></i>
+                                </svg>
+                                Back to Shopping
+                            </a>
+                        </button>
+                        <!-- /Back to Shopping -->
+
+                        <!-- Add to Card -->
+                        <button class="btn btn-outline-dark">Add to Card</button>
+                        <!-- /Add to Card -->
+
+                        <h4 style="display: inline-block; float: right">$ {{ product.price | floatformat:0 }}</h4>
+                    </div>
+                </div>
+                <!-- /Buttons -->
+            </div>
+            <!-- /Detail Article -->
+
+
+        </div>
+        <!-- /Detail -->
+
+        <hr>
+        <span class="mx-3 fw-normal me-auto">Mahsulot tavsifi</span>
+        <span class="mx-3 me-auto">Sharhlar (231) </span>
+        <hr>
+
+        <div class="mb-4">
+            {{ product.docs | safe }}
+        </div>
+
+    {% else %}
+        <div class="fs-1"> Product not found</div>
+    {% endif %}
+
+{% endblock %}
+<!-- /Content -->

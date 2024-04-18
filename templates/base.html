@@ -1,0 +1,209 @@
+<!doctype html>
+
+<!-- LOAD -->
+{% load static %}
+{% load crispy_forms_tags %}
+<!--/ LOAD -->
+
+<html lang="en">
+<head>
+    <!-- meta -->
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- /meta -->
+
+    <!-- Title -->
+    <title>{% block title %} Main {% endblock %}</title>
+    <!-- /Title -->
+
+    <!-- Global CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- /Global CSS -->
+
+    <!-- Bootstrap ICONS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- /Bootstrap ICONS -->
+    <style>
+        th {
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+    <!-- Local CSS-->
+    {% block style %} {% endblock %}
+    <!-- /Local CSS-->
+
+</head>
+<body>
+
+<!-- Container -->
+<div class="container">
+    <!-- Navbar -->
+    {% include 'core/navbar.html' %}
+    <!-- /Navbar -->
+
+    <!-- BreadCrumbs -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb breadcrumb-chevron rounded mt-3">
+            {% block breadcrumbs %}
+                <!-- here comes all kinds of breadcrumbs. -->
+            {% endblock %}
+        </ol>
+    </nav>
+    <!-- /BreadCrumbs -->
+
+    <!-- Content -->
+    {% block content %}
+
+    {% endblock %}
+    <!-- /Content -->
+
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
+    <!-- /Footer -->
+</div>
+<!-- /Container -->
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+<!-- /JS -->
+
+<script>
+    /**
+     * @license Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
+     * For licensing, see LICENSE.md or http://ckeditor.com/license
+     */
+
+    CKEDITOR.plugins.add('table', {
+        requires: 'dialog',
+        // jscs:disable maximumLineLength
+        lang: 'af,ar,az,bg,bn,bs,ca,cs,cy,da,de,de-ch,el,en,en-au,en-ca,en-gb,eo,es,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,oc,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,tt,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
+        // jscs:enable maximumLineLength
+        icons: 'table', // %REMOVE_LINE_CORE%
+        hidpi: true, // %REMOVE_LINE_CORE%
+        init: function (editor) {
+            if (editor.blockless)
+                return;
+
+            var lang = editor.lang.table;
+
+            editor.addCommand('table', new CKEDITOR.dialogCommand('table', {
+                context: 'table',
+                allowedContent: 'table{width,height}[align,border,cellpadding,cellspacing,summary];' +
+                    'caption tbody thead tfoot;' +
+                    'th td tr[scope];' +
+                    (editor.plugins.dialogadvtab ? 'table' + editor.plugins.dialogadvtab.allowedContent() : ''),
+                requiredContent: 'table',
+                contentTransformations: [
+                    ['table{width}: sizeToStyle', 'table[width]: sizeToAttribute'],
+                    ['td: splitBorderShorthand'],
+                    [{
+                        element: 'table',
+                        right: function (element) {
+                            if (element.styles) {
+                                if (element.styles.border && element.styles.border.match(/solid/)) {
+                                    element.attributes.border = 1;
+                                }
+                                if (element.styles['border-collapse'] == 'collapse') {
+                                    element.attributes.cellspacing = 0;
+                                }
+                            }
+                        }
+                    }]
+                ]
+            }));
+
+            function createDef(def) {
+                return CKEDITOR.tools.extend(def || {}, {
+                    contextSensitive: 1,
+                    refresh: function (editor, path) {
+                        this.setState(path.contains('table', 1) ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED);
+                    }
+                });
+            }
+
+            editor.addCommand('tableProperties', new CKEDITOR.dialogCommand('tableProperties', createDef()));
+            editor.addCommand('tableDelete', createDef({
+                exec: function (editor) {
+                    var path = editor.elementPath(),
+                        table = path.contains('table', 1);
+
+                    if (!table)
+                        return;
+
+                    // If the table's parent has only one child remove it as well (unless it's a table cell, or the editable element) (#5416, #6289, #12110)
+                    var parent = table.getParent(),
+                        editable = editor.editable();
+
+                    if (parent.getChildCount() == 1 && !parent.is('td', 'th') && !parent.equals(editable))
+                        table = parent;
+
+                    var range = editor.createRange();
+                    range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
+                    table.remove();
+                    range.select();
+                }
+            }));
+
+            editor.ui.addButton && editor.ui.addButton('Table', {
+                label: lang.toolbar,
+                command: 'table',
+                toolbar: 'insert,30'
+            });
+
+            CKEDITOR.dialog.add('table', this.path + 'dialogs/table.js');
+            CKEDITOR.dialog.add('tableProperties', this.path + 'dialogs/table.js');
+
+            // If the "menu" plugin is loaded, register the menu items.
+            if (editor.addMenuItems) {
+                editor.addMenuItems({
+                    table: {
+                        label: lang.menu,
+                        command: 'tableProperties',
+                        group: 'table',
+                        order: 5
+                    },
+
+                    tabledelete: {
+                        label: lang.deleteTable,
+                        command: 'tableDelete',
+                        group: 'table',
+                        order: 1
+                    }
+                });
+            }
+
+            editor.on('doubleclick', function (evt) {
+                var element = evt.data.element;
+
+                if (element.is('table'))
+                    evt.data.dialog = 'tableProperties';
+            });
+
+            // If the "contextmenu" plugin is loaded, register the listeners.
+            if (editor.contextMenu) {
+                editor.contextMenu.addListener(function () {
+                    // menu item state is resolved on commands.
+                    return {
+                        tabledelete: CKEDITOR.TRISTATE_OFF,
+                        table: CKEDITOR.TRISTATE_OFF
+                    };
+                });
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
